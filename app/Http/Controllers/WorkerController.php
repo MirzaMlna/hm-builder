@@ -7,9 +7,6 @@ use Illuminate\Http\Request;
 
 class WorkerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $workers = Worker::paginate(10);
@@ -20,51 +17,60 @@ class WorkerController extends Controller
         return view('workers.index', compact('workers', 'totalWorkers', 'activeWorkers', 'totalDailySalary'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('workers.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'code'         => 'required|string|max:10|unique:workers',
+            'name'         => 'required|string|max:100',
+            'phone'        => 'nullable|string|max:20',
+            'birth_date'   => 'nullable|date',
+            'address'      => 'nullable|string',
+            'daily_salary' => 'nullable|numeric',
+            'is_active'    => 'boolean',
+            'note'         => 'nullable|string',
+        ]);
+
+        Worker::create($validated);
+
+        return redirect()->route('workers.index')->with('success', 'Tukang berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Worker $worker)
     {
-        //
+        return view('workers.show', compact('worker'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Worker $worker)
     {
-        //
+        return view('workers.edit', compact('worker'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Worker $worker)
     {
-        //
+        $validated = $request->validate([
+            'code'         => 'required|string|max:10|unique:workers,code,' . $worker->id,
+            'name'         => 'required|string|max:100',
+            'phone'        => 'nullable|string|max:20',
+            'birth_date'   => 'nullable|date',
+            'address'      => 'nullable|string',
+            'daily_salary' => 'nullable|numeric',
+            'is_active'    => 'boolean',
+            'note'         => 'nullable|string',
+        ]);
+
+        $worker->update($validated);
+
+        return redirect()->route('workers.index')->with('success', 'Tukang berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Worker $worker)
     {
-        //
+        $worker->delete();
+        return redirect()->route('workers.index')->with('success', 'Tukang berhasil dihapus.');
     }
 }
