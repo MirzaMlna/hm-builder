@@ -32,7 +32,7 @@ class WorkerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            // 'code' => 'required|string|max:10|unique:workers', // hapus validasi ini
+            // 'code' => 'required|string|max:10|unique:workers',
             'name'         => 'required|string|max:100',
             'phone'        => 'nullable|string|max:20',
             'birth_date'   => 'nullable|date',
@@ -79,7 +79,7 @@ class WorkerController extends Controller
     public function update(Request $request, Worker $worker)
     {
         $validated = $request->validate([
-            'code'         => 'required|string|max:10|unique:workers,code,' . $worker->id,
+            // 'code'         => 'required|string|max:10|unique:workers,code,' . $worker->id,
             'name'         => 'required|string|max:100',
             'phone'        => 'nullable|string|max:20',
             'birth_date'   => 'nullable|date',

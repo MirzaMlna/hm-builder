@@ -84,8 +84,8 @@
 
                     {{-- Tombol --}}
                     <div class="mt-2 flex justify-end">
-                        <a href="{{ route('workers.index') }}" class="bg-gray-300 px-4 py-2 rounded">Batal</a>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
+                        <a href="{{ route('workers.index') }}" class="bg-gray-300 px-4 py-2 me-2 rounded">Batal</a>
+                        <button type="submit" class="bg-sky-800 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
             </div>

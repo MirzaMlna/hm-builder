@@ -14,11 +14,6 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label>Kode</label>
-                            <input type="text" name="code" value="{{ old('code', $worker->code) }}"
-                                class="w-full border rounded p-2">
-                        </div>
-                        <div>
                             <label>Nama</label>
                             <input type="text" name="name" value="{{ old('name', $worker->name) }}"
                                 class="w-full border rounded p-2">
@@ -55,7 +50,7 @@
 
                     <div class="mt-4 flex justify-end gap-2">
                         <a href="{{ route('workers.index') }}" class="bg-gray-300 px-4 py-2 rounded">Batal</a>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update</button>
+                        <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded">Perbarui</button>
                     </div>
                 </form>
 

@@ -59,7 +59,8 @@
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold">Daftar Tukang Aktif</h3>
+                                <h3 class="text-lg font-semibold"><span><i
+                                            class="bi bi-person-check me-2"></i></span>Daftar Tukang Aktif</h3>
                                 <div class="flex gap-2">
                                     <a href="{{ route('workers.create') }}"
                                         class="bg-sky-800 hover:bg-sky-700 text-white px-4 py-2 rounded">
