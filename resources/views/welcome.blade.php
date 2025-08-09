@@ -18,8 +18,7 @@
         <p class="text-sm text-gray-600 mb-6">Silakan login atau daftar untuk melanjutkan.</p>
 
         <div class="flex justify-center gap-4">
-            <a href="{{ route('login') }}"
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            <a href="{{ route('login') }}" class="bg-sky-800 text-white px-4 py-2 rounded hover:bg-sky-700 transition">
                 Login
             </a>
             <a href="{{ route('register') }}"
