@@ -7,60 +7,64 @@ use Illuminate\Http\Request;
 
 class WorkerController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $workers = Worker::all();
-        return response()->json($workers);
+        $workers = Worker::paginate(10);
+        $totalWorkers = Worker::count();
+        $activeWorkers = Worker::where('is_active', true)->count();
+        $totalDailySalary = Worker::sum('daily_salary');
+
+        return view('workers.index', compact('workers', 'totalWorkers', 'activeWorkers', 'totalDailySalary'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'code'         => 'required|string|max:10|unique:workers',
-            'name'         => 'required|string|max:100',
-            'phone'        => 'nullable|string|max:20',
-            'birth_date'   => 'nullable|date',
-            'address'      => 'nullable|string',
-            'qr_code_path' => 'nullable|string|max:255',
-            'photo'        => 'nullable|string|max:255',
-            'daily_salary' => 'nullable|numeric',
-            'is_active'    => 'boolean',
-            'note'         => 'nullable|string',
-        ]);
-
-        $worker = Worker::create($validated);
-
-        return response()->json($worker, 201);
+        //
     }
 
-    public function show(Worker $worker)
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
-        return response()->json($worker);
+        //
     }
 
-    public function update(Request $request, Worker $worker)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
     {
-        $validated = $request->validate([
-            'code'         => 'required|string|max:10|unique:workers,code,' . $worker->id,
-            'name'         => 'required|string|max:100',
-            'phone'        => 'nullable|string|max:20',
-            'birth_date'   => 'nullable|date',
-            'address'      => 'nullable|string',
-            'qr_code_path' => 'nullable|string|max:255',
-            'photo'        => 'nullable|string|max:255',
-            'daily_salary' => 'nullable|numeric',
-            'is_active'    => 'boolean',
-            'note'         => 'nullable|string',
-        ]);
-
-        $worker->update($validated);
-
-        return response()->json($worker);
+        //
     }
 
-    public function destroy(Worker $worker)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
     {
-        $worker->delete();
-        return response()->json(null, 204);
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
     }
 }

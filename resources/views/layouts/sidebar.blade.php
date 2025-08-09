@@ -10,7 +10,11 @@
     <nav class="flex flex-col py-4 space-y-1">
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="px-6 py-3 flex items-center gap-3">
             <i class="bi bi-graph-up"></i>
-            <span>{{ __('Dashboard') }}</span>
+            <span>{{ __('Beranda') }}</span>
+        </x-nav-link>
+        <x-nav-link :href="route('workers.index')" :active="request()->routeIs('workers.index')" class="px-6 py-3 flex items-center gap-3">
+            <i class="bi bi-people"></i>
+            <span>{{ __('Tukang') }}</span>
         </x-nav-link>
 
         <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')" class="px-6 py-3 flex items-center gap-3">
