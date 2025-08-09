@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('phone', 20)->nullable();
             $table->date('birth_date')->nullable();
             $table->text('address')->nullable();
-            $table->string('qr_code_path', 255)->nullable();
+            // $table->string('qr_code_path', 255)->nullable();
             $table->string('photo', 255)->nullable();
             $table->decimal('daily_salary', 15, 2)->nullable();
             $table->boolean('is_active')->default(true);

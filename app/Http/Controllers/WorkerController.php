@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Worker;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class WorkerController extends Controller
 {
@@ -31,9 +32,14 @@ class WorkerController extends Controller
             'birth_date'   => 'nullable|date',
             'address'      => 'nullable|string',
             'daily_salary' => 'nullable|numeric',
-            'is_active'    => 'boolean',
+            'is_active'    => 'nullable|boolean',
             'note'         => 'nullable|string',
+            'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('workers', 'public');
+        }
 
         Worker::create($validated);
 
@@ -42,7 +48,8 @@ class WorkerController extends Controller
 
     public function show(Worker $worker)
     {
-        return view('workers.show', compact('worker'));
+        $qrUrl = generateQr($worker->id, 'E', 'workers.index');
+        return view('workers.show', compact('worker', 'qrUrl'));
     }
 
     public function edit(Worker $worker)
@@ -59,9 +66,19 @@ class WorkerController extends Controller
             'birth_date'   => 'nullable|date',
             'address'      => 'nullable|string',
             'daily_salary' => 'nullable|numeric',
-            'is_active'    => 'boolean',
+            'is_active'    => 'nullable|boolean',
             'note'         => 'nullable|string',
+            'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
+
+        if ($request->hasFile('photo')) {
+            // Hapus foto lama jika ada
+            if ($worker->photo && Storage::disk('public')->exists($worker->photo)) {
+                Storage::disk('public')->delete($worker->photo);
+            }
+            // Simpan foto baru
+            $validated['photo'] = $request->file('photo')->store('workers', 'public');
+        }
 
         $worker->update($validated);
 
@@ -70,7 +87,13 @@ class WorkerController extends Controller
 
     public function destroy(Worker $worker)
     {
+        // Hapus foto lama jika ada
+        if ($worker->photo && Storage::disk('public')->exists($worker->photo)) {
+            Storage::disk('public')->delete($worker->photo);
+        }
+
         $worker->delete();
+
         return redirect()->route('workers.index')->with('success', 'Tukang berhasil dihapus.');
     }
 }

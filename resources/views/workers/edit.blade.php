@@ -8,7 +8,7 @@
     <div class="py-6">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <form method="POST" action="{{ route('workers.update', $worker->id) }}">
+                <form method="POST" action="{{ route('workers.update', $worker->id) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -40,11 +40,8 @@
                                 class="w-full border rounded p-2">
                         </div>
                         <div>
-                            <label>Status Aktif</label>
-                            <select name="is_active" class="w-full border rounded p-2">
-                                <option value="1" {{ $worker->is_active ? 'selected' : '' }}>Aktif</option>
-                                <option value="0" {{ !$worker->is_active ? 'selected' : '' }}>Tidak Aktif</option>
-                            </select>
+                            <label>Foto</label>
+                            <input type="file" name="photo" accept="image/*" class="border rounded p-2 w-full">
                         </div>
                         <div class="md:col-span-2">
                             <label>Alamat</label>
@@ -61,6 +58,7 @@
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update</button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
