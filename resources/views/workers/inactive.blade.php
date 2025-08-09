@@ -1,8 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Tukang Nonaktif
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Tukang
+            </h2>
+            <a href="{{ route('workers.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+                <span><i class="bi bi-person-check me-2"></i></span>Tukang Aktif
+            </a>
+        </div>
+
     </x-slot>
 
     <div class="py-6">
@@ -11,10 +17,7 @@
                 <div class="mb-4 flex justify-between items-center">
                     <h3 class="text-lg font-semibold"><span><i class="bi bi-person-slash me-2"></i></span>Daftar Tukang
                         Nonaktif</h3>
-                    <a href="{{ route('workers.index') }}"
-                        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
-                        <span><i class="bi bi-person-check me-2"></i></span>Tukang Aktif
-                    </a>
+
                 </div>
 
                 <div class="overflow-x-auto rounded-lg overflow-hidden border border-gray-200">

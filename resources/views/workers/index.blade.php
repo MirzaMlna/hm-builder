@@ -1,8 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Tukang
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Tukang
+            </h2>
+            <a href="{{ route('workers.inactive') }}" class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded">
+                <span><i class="bi bi-person-slash me-2"></i></span>Tukang Nonaktif
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-6">
@@ -53,24 +58,17 @@
                             </div>
                         </div>
                     </div>
-
-
                     <!-- Tabel Tukang -->
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-lg font-semibold"><span><i
                                             class="bi bi-person-check me-2"></i></span>Daftar Tukang Aktif</h3>
-                                <div class="flex gap-2">
-                                    <a href="{{ route('workers.create') }}"
-                                        class="bg-sky-800 hover:bg-sky-700 text-white px-4 py-2 rounded">
-                                        <span><i class="bi bi-person-plus me-2"></i></span>Tambah Tukang
-                                    </a>
-                                    <a href="{{ route('workers.inactive') }}"
-                                        class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded">
-                                        <span><i class="bi bi-person-slash me-2"></i></span>Tukang Nonaktif
-                                    </a>
-                                </div>
+                                <a href="{{ route('workers.create') }}"
+                                    class="bg-sky-800 hover:bg-sky-700 text-white px-4 py-2 rounded">
+                                    <span><i class="bi bi-person-plus me-2"></i></span>Tambah Tukang
+                                </a>
+
                             </div>
 
 
