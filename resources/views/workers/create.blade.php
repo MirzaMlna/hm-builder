@@ -12,15 +12,6 @@
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {{-- Kode --}}
-                        <div>
-                            <label>Kode</label>
-                            <input type="text" name="code" value="{{ old('code') }}"
-                                class="w-full border rounded p-2 @error('code') border-red-500 @enderror">
-                            @error('code')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
 
                         {{-- Nama --}}
                         <div>

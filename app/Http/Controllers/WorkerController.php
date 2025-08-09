@@ -26,7 +26,7 @@ class WorkerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code'         => 'required|string|max:10|unique:workers',
+            // 'code' => 'required|string|max:10|unique:workers', // hapus validasi ini
             'name'         => 'required|string|max:100',
             'phone'        => 'nullable|string|max:20',
             'birth_date'   => 'nullable|date',
@@ -37,6 +37,18 @@ class WorkerController extends Controller
             'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
+        // Generate kode otomatis
+        $count = Worker::count() + 1;
+        $kode = 'TKG' . str_pad($count, 3, '0', STR_PAD_LEFT);
+
+        // Pastikan kode unik (optional)
+        while (Worker::where('code', $kode)->exists()) {
+            $count++;
+            $kode = 'TKG' . str_pad($count, 3, '0', STR_PAD_LEFT);
+        }
+
+        $validated['code'] = $kode;
+
         if ($request->hasFile('photo')) {
             $validated['photo'] = $request->file('photo')->store('workers', 'public');
         }
@@ -45,6 +57,7 @@ class WorkerController extends Controller
 
         return redirect()->route('workers.index')->with('success', 'Tukang berhasil ditambahkan.');
     }
+
 
     public function show(Worker $worker)
     {
