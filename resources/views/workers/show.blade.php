@@ -170,4 +170,5 @@
     });
 
     qrCode.append(document.getElementById("qr"));
+    window.print();
 </script>

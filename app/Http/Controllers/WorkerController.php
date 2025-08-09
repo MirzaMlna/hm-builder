@@ -10,12 +10,18 @@ class WorkerController extends Controller
 {
     public function index()
     {
-        $workers = Worker::paginate(10);
+        $workers = Worker::where('is_active', true)->paginate(10);
         $totalWorkers = Worker::count();
         $activeWorkers = Worker::where('is_active', true)->count();
-        $totalDailySalary = Worker::sum('daily_salary');
+        $totalDailySalary = Worker::where('is_active', true)->sum('daily_salary');
 
         return view('workers.index', compact('workers', 'totalWorkers', 'activeWorkers', 'totalDailySalary'));
+    }
+
+    public function inactive()
+    {
+        $workers = Worker::where('is_active', false)->paginate(10);
+        return view('workers.inactive', compact('workers'));
     }
 
     public function create()
@@ -108,5 +114,27 @@ class WorkerController extends Controller
         $worker->delete();
 
         return redirect()->route('workers.index')->with('success', 'Tukang berhasil dihapus.');
+    }
+    public function deactivate(Request $request, Worker $worker)
+    {
+        $validated = $request->validate([
+            'note' => 'required|string|max:255',
+        ]);
+
+        $worker->update([
+            'is_active' => false,
+            'note' => $validated['note'],
+        ]);
+
+        return redirect()->route('workers.index')->with('success', 'Tukang berhasil dinonaktifkan.');
+    }
+    public function activate(Request $request, Worker $worker)
+    {
+        $worker->update([
+            'is_active' => true,
+            'note' => null, // reset note saat aktifkan kembali
+        ]);
+
+        return redirect()->route('workers.inactive')->with('success', 'Tukang berhasil diaktifkan kembali.');
     }
 }
