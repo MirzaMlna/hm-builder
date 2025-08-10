@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
@@ -16,10 +17,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Worker management routes
     Route::post('/workers/{worker}/deactivate', [WorkerController::class, 'deactivate'])->name('workers.deactivate');
     Route::get('/workers/inactive', [WorkerController::class, 'inactive'])->name('workers.inactive');
     Route::post('/workers/{worker}/activate', [WorkerController::class, 'activate'])->name('workers.activate');
     Route::resource('workers', WorkerController::class);
+    // Presence management routes
+    Route::resource('presences', PresenceController::class);
 });
 
 require __DIR__ . '/auth.php';
