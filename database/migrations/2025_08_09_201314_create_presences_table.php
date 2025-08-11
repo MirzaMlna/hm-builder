@@ -8,7 +8,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('presences', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
+            $table->date('date');
             $table->unsignedBigInteger('worker_id');
             $table->unsignedBigInteger('presence_schedule_id');
             $table->time('first_check_in')->nullable();

@@ -8,8 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('presence_schedules', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->date('date');
+            $table->id();
             $table->time('first_check_in_start')->nullable();
             $table->time('first_check_in_end')->nullable();
             $table->time('second_check_in_start')->nullable();
