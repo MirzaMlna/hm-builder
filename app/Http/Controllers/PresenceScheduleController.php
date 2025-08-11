@@ -47,17 +47,18 @@ class PresenceScheduleController extends Controller
     private function validateTimes(Request $request)
     {
         $rules = [
-            'first_check_in_start'  => 'required|date_format:H:i',
-            'first_check_in_end'    => 'required|date_format:H:i|after:first_check_in_start',
-            'second_check_in_start' => 'required|date_format:H:i|after_or_equal:first_check_in_end',
-            'second_check_in_end'   => 'required|date_format:H:i|after:second_check_in_start',
-            'check_out_start'       => 'required|date_format:H:i|after_or_equal:second_check_in_end',
-            'check_out_end'         => 'required|date_format:H:i|after:check_out_start',
+            'first_check_in_start'  => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+            'first_check_in_end'    => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/', 'after:first_check_in_start'],
+            'second_check_in_start' => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/', 'after_or_equal:first_check_in_end'],
+            'second_check_in_end'   => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/', 'after:second_check_in_start'],
+            'check_out_start'       => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/', 'after_or_equal:second_check_in_end'],
+            'check_out_end'         => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/', 'after:check_out_start'],
         ];
 
         $messages = [
             'after' => ':attribute harus lebih besar dari waktu sebelumnya.',
             'after_or_equal' => ':attribute harus sama atau lebih besar dari waktu sebelumnya.',
+            'regex' => ':attribute harus dalam format jam (HH:mm atau HH:mm:ss).',
         ];
 
         $request->validate($rules, $messages);
