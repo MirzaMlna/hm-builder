@@ -13,7 +13,7 @@ class Presence extends Model
 
     protected $fillable = [
         'worker_id',
-        'presences_schedule_id',
+        'presence_schedule_id',
         'first_check_in',
         'second_check_in',
         'check_out',
@@ -21,7 +21,7 @@ class Presence extends Model
 
     public function schedule()
     {
-        return $this->belongsTo(PresenceSchedule::class, 'presences_schedule_id');
+        return $this->belongsTo(PresenceSchedule::class, 'presence_schedule_id');
     }
 
     public function worker()

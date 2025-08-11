@@ -9,7 +9,7 @@ class PresenceSchedule extends Model
 {
     use HasFactory;
 
-    protected $table = 'presences_schedules';
+    protected $table = 'presence_schedules';
 
     protected $fillable = [
         'date',
@@ -23,6 +23,6 @@ class PresenceSchedule extends Model
 
     public function presences()
     {
-        return $this->hasMany(Presence::class, 'presences_schedule_id');
+        return $this->hasMany(Presence::class, 'presence_schedule_id');
     }
 }

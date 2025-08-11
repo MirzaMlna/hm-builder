@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('presences_schedules', function (Blueprint $table) {
+        Schema::create('presence_schedules', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->date('date');
             $table->time('first_check_in_start')->nullable();
@@ -22,6 +22,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('presences_schedules');
+        Schema::dropIfExists('presence_schedules');
     }
 };
