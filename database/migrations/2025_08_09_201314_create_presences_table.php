@@ -10,18 +10,14 @@ return new class extends Migration {
         Schema::create('presences', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('worker_id');
-            $table->date('date');
+            $table->unsignedBigInteger('presences_schedule_id');
             $table->time('first_check_in')->nullable();
             $table->time('second_check_in')->nullable();
             $table->time('check_out')->nullable();
             $table->timestamps();
 
-            $table->foreign('worker_id')
-                ->references('id')
-                ->on('workers')
-                ->onDelete('cascade');
-
-            $table->unique(['worker_id', 'date']);
+            $table->foreign('worker_id')->references('id')->on('workers')->onDelete('cascade');
+            $table->foreign('presences_schedule_id')->references('id')->on('presences_schedules')->onDelete('cascade');
         });
     }
 
