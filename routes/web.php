@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PresenceController;
+use App\Http\Controllers\PresenceScheduleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('workers', WorkerController::class);
     // Presence management routes
     Route::resource('presences', PresenceController::class);
+    Route::resource('presence-schedules', PresenceScheduleController::class)->except(['create', 'edit']);
+    Route::get('presence-schedules', [PresenceScheduleController::class, 'index'])->name('presence-schedules.index');
+    Route::post('presence-schedules', [PresenceScheduleController::class, 'storeOrUpdate'])->name('presence-schedules.save');
 });
 
 require __DIR__ . '/auth.php';

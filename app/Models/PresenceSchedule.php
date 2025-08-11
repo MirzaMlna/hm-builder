@@ -12,7 +12,6 @@ class PresenceSchedule extends Model
     protected $table = 'presence_schedules';
 
     protected $fillable = [
-        'date',
         'first_check_in_start',
         'first_check_in_end',
         'second_check_in_start',
