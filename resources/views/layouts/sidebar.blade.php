@@ -10,20 +10,23 @@
     <nav class="flex flex-col py-4 space-y-1">
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="px-6 py-3 flex items-center gap-3">
             <i class="bi bi-graph-up"></i>
-            <span>{{ __('Beranda') }}</span>
+            <span>Beranda</span>
         </x-nav-link>
         <x-nav-link :href="route('workers.index')" :active="request()->routeIs('workers.index')" class="px-6 py-3 flex items-center gap-3">
             <i class="bi bi-people"></i>
-            <span>{{ __('Tukang') }}</span>
+            <span>Tukang</span>
+        </x-nav-link>
+        <x-nav-link :href="route('presence-schedules.index')" :active="request()->routeIs('presence-schedules.index')" class="px-6 py-3 flex items-center gap-3">
+            <i class="bi bi-clock"></i>
+            <span>Rentang Waktu Presensi</span>
         </x-nav-link>
         <x-nav-link :href="route('presences.index')" :active="request()->routeIs('presences.index')" class="px-6 py-3 flex items-center gap-3">
             <i class="bi bi-qr-code-scan"></i>
-            <span>{{ __('Scan Presensi') }}</span>
+            <span>Scan Presensi</span>
         </x-nav-link>
-
         <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')" class="px-6 py-3 flex items-center gap-3">
             <i class="bi bi-person-circle"></i>
-            <span>{{ __('Profile') }}</span>
+            <span>Profile</span>
         </x-nav-link>
 
         <form method="POST" action="{{ route('logout') }}">
@@ -31,7 +34,7 @@
             <x-nav-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();"
                 class="px-6 py-3 flex items-center gap-3">
                 <i class="bi bi-box-arrow-right"></i>
-                <span>{{ __('Log Out') }}</span>
+                <span>Log Out</span>
             </x-nav-link>
         </form>
     </nav>
