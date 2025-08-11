@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PresenceSchedule;
 use Illuminate\Http\Request;
 
 class PresenceController extends Controller
@@ -11,7 +12,8 @@ class PresenceController extends Controller
      */
     public function index()
     {
-        return view('presences.index');
+        $presence_schedules = PresenceSchedule::first(); // ambil satu data saja
+        return view('presences.index', compact('presence_schedules'));
     }
 
     /**

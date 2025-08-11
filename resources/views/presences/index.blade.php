@@ -7,10 +7,53 @@
 
     <div class="py-12">
         <div class="mx-auto sm:px-6 lg:px-8 space-y-6">
-            {{-- Baris Pertama: Kamera + Hasil Scan --}}
-            <div class="bg-white p-6 shadow-sm rounded-lg">
-                <div class="text-lg"></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                <div class="bg-white rounded-lg shadow-md p-5 border-l-4 border-blue-500">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Presensi Pertama</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                {{ \Carbon\Carbon::parse($presence_schedules->first_check_in_start)->format('H:i') }} -
+                                {{ \Carbon\Carbon::parse($presence_schedules->first_check_in_end)->format('H:i') }}
+                            </p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="bi bi-people text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-5 border-l-4 border-green-500">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Presensi Kedua</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                {{ \Carbon\Carbon::parse($presence_schedules->second_check_in_start)->format('H:i') }} -
+                                {{ \Carbon\Carbon::parse($presence_schedules->second_check_in_end)->format('H:i') }}
+                            </p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="bi bi-check-circle text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-5 border-l-4 border-amber-500">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Presensi Pulang</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                {{ \Carbon\Carbon::parse($presence_schedules->check_out_start)->format('H:i') }} -
+                                {{ \Carbon\Carbon::parse($presence_schedules->check_out_end)->format('H:i') }}
+                            </p>
+                        </div>
+                        <div class="bg-amber-100 p-3 rounded-full">
+                            <i class="bi bi-wallet2 text-amber-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
                 {{-- Kamera (Kiri) --}}
                 <div class="bg-white shadow-sm rounded-lg p-6 basis-1/2 flex flex-col">
