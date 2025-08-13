@@ -59,22 +59,14 @@
                 <div class="bg-white shadow-sm rounded-lg p-6 basis-1/2 flex flex-col">
                     <div
                         class="border border-gray-200 rounded-lg w-full aspect-square mx-auto relative overflow-hidden flex items-center justify-center text-gray-500">
-                        <video id="previewVideo" class="w-full h-full object-cover hidden" autoplay muted
-                            playsinline></video>
-                        <div id="placeholder" class="flex flex-col items-center justify-center absolute inset-0">
-                            <i class="bi bi-camera text-4xl mb-2"></i>
-                            <p class="font-medium">Pratinjau Kamera</p>
-                            <span class="text-sm">Tekan "Mulai Memindai" untuk mulai</span>
-                        </div>
+                        <div id="qr-reader" style="width:100%;"></div>
                     </div>
                     <div class="mt-4 flex space-x-2">
-                        <button id="startScanBtn" class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2 rounded">
-                            Mulai Memindai
-                        </button>
-                        <button id="stopScanBtn"
-                            class="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded hidden">
-                            Tutup Kamera
-                        </button>
+                        <select id="presensiType" class="border rounded px-2 py-1">
+                            <option value="first_check_in">Presensi Pertama</option>
+                            <option value="second_check_in">Presensi Kedua</option>
+                            <option value="check_out">Presensi Pulang</option>
+                        </select>
                     </div>
                 </div>
 
@@ -84,7 +76,7 @@
                         <i class="bi bi-qr-code mr-2"></i> Hasil Scan
                     </h3>
                     <div id="scanResult" class="flex items-center space-x-3">
-                        <img src="/pekerja.jpg" alt="Foto" class="h-12 w-12 rounded-full object-cover">
+                        {{-- <img src="/pekerja.jpg" alt="Foto" class="h-12 w-12 rounded-full object-cover">
                         <div class="flex-1">
                             <p class="font-bold">TKG010</p>
                             <p class="text-gray-600">Muhammad Palui</p>
@@ -93,7 +85,7 @@
                         <div class="text-right">
                             <p class="font-bold text-lg">08.10</p>
                             <p class="text-gray-500 text-sm">WITA</p>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -101,43 +93,49 @@
     </div>
 
     {{-- Script Kamera --}}
+    <!-- html5-qrcode CDN -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
-        const startScanBtn = document.getElementById('startScanBtn');
-        const stopScanBtn = document.getElementById('stopScanBtn');
-        const video = document.getElementById('previewVideo');
-        const placeholder = document.getElementById('placeholder');
-        let cameraStream = null;
+        const presensiType = document.getElementById('presensiType');
+        const scanResult = document.getElementById('scanResult');
 
-        startScanBtn.addEventListener('click', async () => {
-            try {
-                cameraStream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: "environment"
+        function onScanSuccess(decodedText, decodedResult) {
+            // Kirim hasil scan ke backend
+            fetch("{{ route('presences.scan') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
-                    audio: false
+                    body: JSON.stringify({
+                        qr: decodedText,
+                        type: presensiType.value
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        scanResult.innerHTML =
+                            `<div class='text-green-600 font-bold'>Presensi ${presensiType.options[presensiType.selectedIndex].text} berhasil untuk <span>${data.worker}</span> pada <span>${data.time}</span></div>`;
+                    } else {
+                        scanResult.innerHTML =
+                            `<div class='text-red-600 font-bold'>${data.error || 'Presensi gagal'}</div>`;
+                    }
+                })
+                .catch(() => {
+                    scanResult.innerHTML = `<div class='text-red-600 font-bold'>Presensi gagal</div>`;
                 });
-                video.srcObject = cameraStream;
-                video.classList.remove('hidden');
-                placeholder.style.display = 'none';
-                startScanBtn.disabled = true;
-                startScanBtn.textContent = "Memindai...";
-                stopScanBtn.classList.remove('hidden');
-            } catch (err) {
-                alert('Gagal mengakses kamera: ' + err.message);
-            }
-        });
+        }
 
-        stopScanBtn.addEventListener('click', () => {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-            video.srcObject = null;
-            video.classList.add('hidden');
-            placeholder.style.display = 'flex';
-            startScanBtn.disabled = false;
-            startScanBtn.textContent = "Mulai Memindai";
-            stopScanBtn.classList.add('hidden');
-        });
+        function onScanFailure(error) {
+            // Tidak perlu aksi, hanya log error
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", {
+                fps: 10,
+                qrbox: 250
+            }, false);
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
 </x-app-layout>

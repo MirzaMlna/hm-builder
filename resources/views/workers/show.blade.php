@@ -158,7 +158,7 @@
         margin: 10,
         type: "svg",
         errorCorrectionLevel: "M",
-        data: "{{ $qrUrl }}",
+        data: "{{ $qrCode }}",
         dotsOptions: {
             color: "black",
             type: "extra-rounded",

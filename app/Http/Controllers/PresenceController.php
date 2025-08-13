@@ -33,6 +33,62 @@ class PresenceController extends Controller
     }
 
     /**
+     * Proses scan QR untuk presensi
+     */
+    public function scanQr(Request $request)
+    {
+        $request->validate([
+            'qr' => 'required|string',
+            'type' => 'required|in:first_check_in,second_check_in,check_out',
+        ]);
+
+        // Decrypt QR (worker id)
+        $hashids = new \Hashids\Hashids('', 40);
+        $decoded = $hashids->decode($request->qr);
+        if (empty($decoded)) {
+            return response()->json(['error' => 'QR tidak valid'], 422);
+        }
+        $workerId = $decoded[0];
+
+        $worker = \App\Models\Worker::find($workerId);
+        if (!$worker) {
+            return response()->json(['error' => 'Pekerja tidak ditemukan'], 404);
+        }
+        if (!$worker->is_active) {
+            return response()->json(['error' => 'Pekerja sudah nonaktif, tidak bisa presensi.'], 403);
+        }
+
+        $schedule = \App\Models\PresenceSchedule::first();
+        if (!$schedule) {
+            return response()->json(['error' => 'Jadwal presensi belum diatur'], 422);
+        }
+
+        $today = now()->format('Y-m-d');
+        $presence = \App\Models\Presence::firstOrCreate([
+            'worker_id' => $worker->id,
+            'date' => $today,
+            'presence_schedule_id' => $schedule->id,
+        ]);
+
+        $now = now()->format('H:i:s');
+        if ($request->type === 'first_check_in') {
+            $presence->first_check_in = $now;
+        } elseif ($request->type === 'second_check_in') {
+            $presence->second_check_in = $now;
+        } elseif ($request->type === 'check_out') {
+            $presence->check_out = $now;
+        }
+        $presence->save();
+
+        return response()->json([
+            'success' => true,
+            'worker' => $worker->name,
+            'type' => $request->type,
+            'time' => $now,
+        ]);
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(string $id)

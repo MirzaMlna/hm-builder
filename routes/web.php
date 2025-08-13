@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/workers/{worker}/activate', [WorkerController::class, 'activate'])->name('workers.activate');
     Route::resource('workers', WorkerController::class);
     // Presence management routes
+    Route::post('presences/scan', [PresenceController::class, 'scanQr'])->name('presences.scan');
     Route::resource('presences', PresenceController::class);
     Route::resource('presence-schedules', PresenceScheduleController::class)->except(['create', 'edit']);
     Route::get('presence-schedules', [PresenceScheduleController::class, 'index'])->name('presence-schedules.index');

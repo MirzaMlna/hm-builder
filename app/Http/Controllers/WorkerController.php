@@ -67,8 +67,8 @@ class WorkerController extends Controller
 
     public function show(Worker $worker)
     {
-        $qrUrl = generateQr($worker->id, 'E', 'workers.index');
-        return view('workers.show', compact('worker', 'qrUrl'));
+        $qrCode = (new \Hashids\Hashids('', 40))->encode($worker->id);
+        return view('workers.show', compact('worker', 'qrCode'));
     }
 
     public function edit(Worker $worker)
