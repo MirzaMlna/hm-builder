@@ -92,15 +92,23 @@
         </div>
     </div>
 
-    {{-- Script Kamera --}}
-    <!-- html5-qrcode CDN -->
+    <!-- HTML5-Qrcode CDN (WAJIB sebelum script scanner) -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         const presensiType = document.getElementById('presensiType');
         const scanResult = document.getElementById('scanResult');
 
+        let scanned = false;
+
         function onScanSuccess(decodedText, decodedResult) {
-            // Kirim hasil scan ke backend
+            if (scanned) return; // kalau sudah scan, hentikan
+
+            scanned = true; // tandai sudah scan
+
             fetch("{{ route('presences.scan') }}", {
                     method: "POST",
                     headers: {
@@ -115,27 +123,47 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        scanResult.innerHTML =
-                            `<div class='text-green-600 font-bold'>Presensi ${presensiType.options[presensiType.selectedIndex].text} berhasil untuk <span>${data.worker}</span> pada <span>${data.time}</span></div>`;
+                        Swal.fire({
+                            title: "Presensi Berhasil",
+                            html: `
+                    <p><b>Jenis Presensi:</b> ${presensiType.options[presensiType.selectedIndex].text}</p>
+                    <img src="${data.photo}" alt="Foto" style="width:80px;height:80px;border-radius:50%;margin-top:10px;">
+                    <p><b>Kode:</b> ${data.code}</p>
+                    <p><b>Nama:</b> ${data.worker}</p>
+                    <p><b>Jam:</b> ${data.time}</p>
+                `,
+                            icon: "success"
+                        });
                     } else {
-                        scanResult.innerHTML =
-                            `<div class='text-red-600 font-bold'>${data.error || 'Presensi gagal'}</div>`;
+                        Swal.fire("Gagal", data.error || "Presensi gagal", "error");
                     }
                 })
                 .catch(() => {
-                    scanResult.innerHTML = `<div class='text-red-600 font-bold'>Presensi gagal</div>`;
+                    Swal.fire("Error", "Presensi gagal", "error");
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        scanned = false; // aktifkan lagi setelah 3 detik
+                    }, 3000);
                 });
         }
 
+
         function onScanFailure(error) {
-            // Tidak perlu aksi, hanya log error
+            // Tidak perlu aksi
         }
 
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-reader", {
-                fps: 10,
-                qrbox: 250
-            }, false);
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        document.addEventListener("DOMContentLoaded", () => {
+            let html5QrcodeScanner = new Html5QrcodeScanner(
+                "qr-reader", {
+                    fps: 10,
+                    qrbox: 250
+                },
+                false
+            );
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        });
     </script>
+
+
 </x-app-layout>

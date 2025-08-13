@@ -42,7 +42,7 @@ class PresenceController extends Controller
             'type' => 'required|in:first_check_in,second_check_in,check_out',
         ]);
 
-        // Decrypt QR (worker id)
+        // Decode QR
         $hashids = new \Hashids\Hashids('', 40);
         $decoded = $hashids->decode($request->qr);
         if (empty($decoded)) {
@@ -70,6 +70,18 @@ class PresenceController extends Controller
             'presence_schedule_id' => $schedule->id,
         ]);
 
+        // 🚫 Pengecekan apakah sudah presensi untuk tipe ini
+        if ($request->type === 'first_check_in' && $presence->first_check_in) {
+            return response()->json(['error' => 'Presensi pertama sudah dilakukan hari ini.'], 422);
+        }
+        if ($request->type === 'second_check_in' && $presence->second_check_in) {
+            return response()->json(['error' => 'Presensi kedua sudah dilakukan hari ini.'], 422);
+        }
+        if ($request->type === 'check_out' && $presence->check_out) {
+            return response()->json(['error' => 'Presensi pulang sudah dilakukan hari ini.'], 422);
+        }
+
+        // Simpan presensi
         $now = now()->format('H:i:s');
         if ($request->type === 'first_check_in') {
             $presence->first_check_in = $now;
@@ -83,10 +95,13 @@ class PresenceController extends Controller
         return response()->json([
             'success' => true,
             'worker' => $worker->name,
+            'code' => $worker->code ?? null, // kalau ada kode pekerja
+            'photo' => $worker->photo_url ?? '/default.jpg', // path foto pekerja
             'type' => $request->type,
             'time' => $now,
         ]);
     }
+
 
     /**
      * Display the specified resource.
