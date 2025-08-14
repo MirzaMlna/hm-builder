@@ -15,13 +15,17 @@ class PresenceController extends Controller
     {
         $presence_schedules = PresenceSchedule::first();
 
-        // Ambil semua presensi hari ini, join dengan data tukang (workers)
+        // Ambil tanggal dari query string, default = hari ini
+        $selectedDate = request('date', Carbon::today()->toDateString());
+
+        // Ambil semua presensi sesuai tanggal yang dipilih
         $presences = Presence::with('worker')
-            ->whereDate('date', Carbon::today())
+            ->whereDate('date', $selectedDate)
             ->get();
 
-        return view('presences.index', compact('presence_schedules', 'presences'));
+        return view('presences.index', compact('presence_schedules', 'presences', 'selectedDate'));
     }
+
 
 
     /**
