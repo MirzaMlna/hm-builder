@@ -1,4 +1,12 @@
 <x-app-layout>
+    <style>
+        /* Mirror kamera agar tampak seperti selfie */
+        #qr-reader video {
+            transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+        }
+    </style>
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Scan QR Presensi') }}
@@ -75,18 +83,39 @@
                     <h3 class="font-semibold mb-4 flex items-center">
                         <i class="bi bi-qr-code mr-2"></i> Hasil Scan
                     </h3>
-                    <div id="scanResult" class="flex items-center space-x-3">
-                        {{-- <img src="/pekerja.jpg" alt="Foto" class="h-12 w-12 rounded-full object-cover">
-                        <div class="flex-1">
-                            <p class="font-bold">TKG010</p>
-                            <p class="text-gray-600">Muhammad Palui</p>
-                            <span class="text-green-600 text-sm">Tepat Waktu</span>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-bold text-lg">08.10</p>
-                            <p class="text-gray-500 text-sm">WITA</p>
-                        </div> --}}
+                    <div class="mt-4">
+                        <h3 class="font-bold mb-2">Hasil Scan - {{ now()->format('d/m/Y') }}</h3>
+                        <table class="w-full border border-gray-300 text-sm">
+                            <thead class="bg-gray-200">
+                                <tr>
+                                    <th class="border p-2 text-center">No</th>
+                                    <th class="border p-2">Nama</th>
+                                    <th class="border p-2 text-center">Kode</th>
+                                    <th class="border p-2 text-center">Presensi 1</th>
+                                    <th class="border p-2 text-center">Presensi 2</th>
+                                    <th class="border p-2 text-center">Presensi Pulang</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($presences as $index => $presence)
+                                    <tr>
+                                        <td class="border p-2 text-center">{{ $index + 1 }}</td>
+                                        <td class="border p-2">{{ $presence->worker->name }}</td>
+                                        <td class="border p-2 text-center">{{ $presence->worker->code }}</td>
+                                        <td class="border p-2 text-center">{{ $presence->first_check_in ?? '-' }}</td>
+                                        <td class="border p-2 text-center">{{ $presence->second_check_in ?? '-' }}</td>
+                                        <td class="border p-2 text-center">{{ $presence->check_out ?? '-' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="border p-2 text-center">Belum ada data presensi hari
+                                            ini</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
+
                 </div>
             </div>
         </div>

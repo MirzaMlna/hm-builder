@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Presence;
 use App\Models\PresenceSchedule;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PresenceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+
     public function index()
     {
-        $presence_schedules = PresenceSchedule::first(); // ambil satu data saja
-        return view('presences.index', compact('presence_schedules'));
+        $presence_schedules = PresenceSchedule::first();
+
+        // Ambil semua presensi hari ini, join dengan data tukang (workers)
+        $presences = Presence::with('worker')
+            ->whereDate('date', Carbon::today())
+            ->get();
+
+        return view('presences.index', compact('presence_schedules', 'presences'));
     }
+
 
     /**
      * Show the form for creating a new resource.
