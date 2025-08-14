@@ -20,8 +20,9 @@ class PresenceController extends Controller
 
         // Ambil semua presensi sesuai tanggal yang dipilih
         $presences = Presence::with('worker')
-            ->whereDate('date', $selectedDate)
-            ->get();
+            ->whereDate('created_at', request('date', now()))
+            ->paginate(10);
+
 
         return view('presences.index', compact('presence_schedules', 'presences', 'selectedDate'));
     }

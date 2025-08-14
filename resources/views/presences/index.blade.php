@@ -124,7 +124,9 @@
                                 <tbody>
                                     @forelse ($presences as $index => $presence)
                                         <tr class="odd:bg-white even:bg-gray-50">
-                                            <td class="p-2 text-center">{{ $index + 1 }}</td>
+                                            <td class="p-2 text-center">
+                                                {{ ($presences->currentPage() - 1) * $presences->perPage() + $loop->iteration }}
+                                            </td>
                                             <td class="p-2">{{ $presence->worker->name }}</td>
                                             <td class="p-2 text-center">{{ $presence->worker->code }}</td>
                                             <td class="p-2 text-center">{{ $presence->first_check_in ?? '-' }}</td>
@@ -141,6 +143,12 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Pagination -->
+                        <div class="mt-4">
+                            {{ $presences->appends(['date' => request('date')])->links() }}
+                        </div>
+
                     </div>
                 </div>
             </div>
