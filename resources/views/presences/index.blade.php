@@ -62,24 +62,33 @@
 
                 <!-- KIRI: Kamera -->
                 <div class="bg-white shadow-sm rounded-lg p-6 basis-1/3 flex flex-col">
-                    <div class="mt-4 flex space-x-2 mb-5">
-                        <div class="relative">
-                            <select id="presensiType"
-                                class="appearance-none w-full md:w-auto rounded-lg border border-gray-300 bg-white px-4 py-2 pr-10 text-gray-700 shadow-sm
-                                       focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
-                                <option value="first_check_in">Presensi Pertama</option>
-                                <option value="second_check_in">Presensi Kedua</option>
-                                <option value="check_out">Presensi Pulang</option>
-                            </select>
-                            <!-- Ikon panah -->
-                            <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
+                    <!-- Waktu Presensi Otomatis -->
+                    <div class="mt-4 mb-5">
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
+                            <span class="font-semibold">Waktu & Tanggal Saat Ini</span><br>
+                            <span id="currentDateTime" class="text-lg"></span>
                         </div>
                     </div>
+                    <script>
+                        function updateDateTime() {
+                            const now = new Date();
+                            const options = {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            };
+                            const dateStr = now.toLocaleDateString('id-ID', options);
+                            const timeStr = now.toLocaleTimeString('id-ID', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                            document.getElementById('currentDateTime').textContent = `${dateStr} - ${timeStr}`;
+                        }
+                        updateDateTime();
+                        setInterval(updateDateTime, 1000);
+                    </script>
 
                     <div
                         class="border border-gray-200 rounded-lg w-full aspect-square mx-auto relative overflow-hidden flex items-center justify-center text-gray-500">
@@ -164,10 +173,58 @@
         const presensiType = document.getElementById('presensiType');
         let scanned = false;
 
+        function getAttendanceType(schedule) {
+            const now = new Date();
+            const today = now.toISOString().slice(0, 10);
+            // Helper to parse time string to Date object for today
+            function parseTime(timeStr) {
+                const [h, m, s] = timeStr.split(":");
+                return new Date(today + "T" + h.padStart(2, "0") + ":" + m.padStart(2, "0") + ":" + (s ? s.padStart(2,
+                    "0") : "00"));
+            }
+            // Compare now with schedule
+            if (now >= parseTime(schedule.first_check_in_start) && now <= parseTime(schedule.first_check_in_end)) {
+                return {
+                    type: "first_check_in",
+                    label: "Presensi Pertama"
+                };
+            } else if (now >= parseTime(schedule.second_check_in_start) && now <= parseTime(schedule.second_check_in_end)) {
+                return {
+                    type: "second_check_in",
+                    label: "Presensi Kedua"
+                };
+            } else if (now >= parseTime(schedule.check_out_start) && now <= parseTime(schedule.check_out_end)) {
+                return {
+                    type: "check_out",
+                    label: "Presensi Pulang"
+                };
+            } else {
+                return {
+                    type: null,
+                    label: "Di luar rentang presensi"
+                };
+            }
+        }
+
+        // Jadwal presensi dari backend
+        const schedule = {
+            first_check_in_start: "{{ $presence_schedules->first_check_in_start }}",
+            first_check_in_end: "{{ $presence_schedules->first_check_in_end }}",
+            second_check_in_start: "{{ $presence_schedules->second_check_in_start }}",
+            second_check_in_end: "{{ $presence_schedules->second_check_in_end }}",
+            check_out_start: "{{ $presence_schedules->check_out_start }}",
+            check_out_end: "{{ $presence_schedules->check_out_end }}"
+        };
+
         function onScanSuccess(decodedText) {
             if (scanned) return;
             scanned = true;
-
+            const attendance = getAttendanceType(schedule);
+            if (!attendance.type) {
+                Swal.fire("Gagal", "Scan QR hanya bisa dilakukan dalam rentang waktu presensi.", "error");
+                setTimeout(() => scanned = false, 3000);
+                return;
+            }
             fetch("{{ route('presences.scan') }}", {
                     method: "POST",
                     headers: {
@@ -176,7 +233,7 @@
                     },
                     body: JSON.stringify({
                         qr: decodedText,
-                        type: presensiType.value
+                        type: attendance.type
                     })
                 })
                 .then(res => res.json())
@@ -185,7 +242,7 @@
                         Swal.fire({
                             title: "Presensi Berhasil",
                             html: `
-                            <p><b>Jenis Presensi:</b> ${presensiType.options[presensiType.selectedIndex].text}</p>
+                            <p><b>Jenis Presensi:</b> ${attendance.label}</p>
                             <img src="${data.photo}" alt="Foto" style="width:80px;height:80px;border-radius:50%;margin-top:10px;">
                             <p><b>Kode:</b> ${data.code}</p>
                             <p><b>Nama:</b> ${data.worker}</p>
