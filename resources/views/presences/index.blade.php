@@ -221,7 +221,9 @@
             scanned = true;
             const attendance = getAttendanceType(schedule);
             if (!attendance.type) {
-                Swal.fire("Gagal", "Scan QR hanya bisa dilakukan dalam rentang waktu presensi.", "error");
+                Swal.fire("Gagal",
+                    "Scan QR hanya bisa dilakukan dalam rentang waktu presensi. Jika anda lupa melakukan presensi, laporkan ke petugas presensi",
+                    "error");
                 setTimeout(() => scanned = false, 3000);
                 return;
             }
