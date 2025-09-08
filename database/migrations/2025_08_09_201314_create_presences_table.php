@@ -13,8 +13,11 @@ return new class extends Migration {
             $table->unsignedBigInteger('worker_id');
             $table->unsignedBigInteger('presence_schedule_id');
             $table->time('first_check_in')->nullable();
+            $table->string('first_check_in_type')->nullable();
             $table->time('second_check_in')->nullable();
+            $table->string('second_check_in_type')->nullable();
             $table->time('check_out')->nullable();
+            $table->string('check_out_type')->nullable();
             $table->timestamps();
 
             $table->foreign('worker_id')->references('id')->on('workers')->onDelete('cascade');
