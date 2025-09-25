@@ -16,8 +16,11 @@ class Presence extends Model
         'date',
         'presence_schedule_id',
         'first_check_in',
+        'first_check_in_type',
         'second_check_in',
+        'second_check_in_type',
         'check_out',
+        'check_out_type',
     ];
 
     public function schedule()

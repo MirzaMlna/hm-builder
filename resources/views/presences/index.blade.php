@@ -117,9 +117,12 @@
                                             </td>
                                             <td class="p-2">{{ $presence->worker->name }}</td>
                                             <td class="p-2 text-center">{{ $presence->worker->code }}</td>
-                                            <td class="p-2 text-center">{{ $presence->first_check_in ?? '-' }}</td>
-                                            <td class="p-2 text-center">{{ $presence->second_check_in ?? '-' }}</td>
-                                            <td class="p-2 text-center">{{ $presence->check_out ?? '-' }}</td>
+                                            <td class="p-2 text-center">{{ $presence->first_check_in ?? '-' }} <br>
+                                                {{ $presence->first_check_in_type ?? '-' }} </td>
+                                            <td class="p-2 text-center">{{ $presence->second_check_in ?? '-' }} <br>
+                                                {{ $presence->second_check_in_type ?? '-' }} </td>
+                                            <td class="p-2 text-center">{{ $presence->check_out ?? '-' }} <br>
+                                                {{ $presence->check_out_type ?? '-' }} </td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -176,28 +179,26 @@
 
             // === Tentukan Jenis Presensi ===
             function getAttendanceType(schedule) {
+                // Tentukan jenis presensi berdasarkan request user (atau deteksi otomatis sesuai jam sekarang)
                 const now = new Date();
-                if (now >= parseTime(schedule.first_check_in_start) && now <= parseTime(schedule
-                        .first_check_in_end))
+                const currentHour = now.getHours();
+
+                if (currentHour < 12) {
                     return {
                         type: "first_check_in",
                         label: "Presensi Pertama"
                     };
-                if (now >= parseTime(schedule.second_check_in_start) && now <= parseTime(schedule
-                        .second_check_in_end))
+                } else if (currentHour < 18) {
                     return {
                         type: "second_check_in",
                         label: "Presensi Kedua"
                     };
-                if (now >= parseTime(schedule.check_out_start) && now <= parseTime(schedule.check_out_end))
+                } else {
                     return {
                         type: "check_out",
                         label: "Presensi Pulang"
                     };
-                return {
-                    type: null,
-                    label: "Di luar rentang presensi"
-                };
+                }
             }
 
             // Jadwal presensi dari backend
@@ -212,11 +213,9 @@
                 const attendance = getAttendanceType(schedule);
 
                 if (!attendance.type) {
-                    Swal.fire("Gagal",
-                        "Scan QR hanya bisa dilakukan dalam rentang waktu presensi. Jika anda lupa, laporkan ke petugas presensi.",
-                        "error");
-                    return setTimeout(() => scanned = false, 3000);
+                    attendance.type = "check_out"; // fallback default
                 }
+
 
                 fetch("{{ route('presences.scan') }}", {
                         method: "POST",
