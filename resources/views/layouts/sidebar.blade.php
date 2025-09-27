@@ -24,6 +24,10 @@
             <i class="bi bi-qr-code-scan"></i>
             <span>Scan Presensi</span>
         </x-nav-link>
+        <x-nav-link :href="route('presences.index')" :active="request()->routeIs('presences.index')" class="px-6 py-3 flex items-center gap-3">
+            <i class="bi bi-cash"></i>
+            <span>Penggajian</span>
+        </x-nav-link>
         <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')" class="px-6 py-3 flex items-center gap-3">
             <i class="bi bi-person-circle"></i>
             <span>Profile</span>
